@@ -4,7 +4,8 @@ require "sinatra"
 # Types of http requests like: Get, Post, Delete, Put,Patch
 get '/' do
   # @ lets you send data variables over to erb files
-  @costume = [
+  puts params
+  backup_costume = [
     "Boo",
     "Frankenstein",
     "Annabelle",
@@ -12,6 +13,16 @@ get '/' do
     "Dracula",
     "Buzz Lightyear"
   ].sample
+
+  puts "User wants to go as #{params["costume"]}"
+  @costume = params.fetch("costume", "")
+  
+  if @costume.empty?
+    @costume = backup_costume
+    puts "Couldn't find that costume, going with the backup: #{@costume}"
+  else
+    puts "Got my costume ready. Going as #{@costume}."
+  end
 
   @image_url = image_url(@costume)
 
@@ -34,6 +45,12 @@ get '/candy' do
   @image_url = image_url(@candy)
 
   erb(:candy)
+end
+
+get '/costume' do
+  @costume = params[:costume]
+
+  puts params
 end
 
 # Returns a string of the url for the webpage we are loading a reference image
